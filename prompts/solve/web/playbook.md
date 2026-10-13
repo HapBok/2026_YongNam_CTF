@@ -1,0 +1,1 @@
+Map routes and source data flow; identify trust boundaries; test one hypothesis locally; verify request/response evidence against the authorized endpoint. Keep requests bounded and avoid destructive actions.

@@ -1,0 +1,9 @@
+id = "rescue-astra"
+stage = "rescue"
+model = "gpt-6-astra"
+effort = "high"
+timeout = 900
+prompt = "prompts/rescue/profile.md"
+daybreak = false
+resumable = false
+fallback = "rescue-fallback"

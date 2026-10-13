@@ -1,0 +1,9 @@
+id = "quick-luna"
+stage = "quick-solve"
+model = "gpt-6-luna"
+effort = "high"
+timeout = 720
+prompt = "prompts/solve/quick.md"
+daybreak = false
+resumable = true
+fallback = "general-sol"

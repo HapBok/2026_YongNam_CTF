@@ -1,0 +1,9 @@
+id = "verify-security"
+stage = "verify-security"
+model = "gpt-6-sol"
+effort = "high"
+timeout = 600
+prompt = "prompts/verify/profile.md"
+daybreak = true
+resumable = false
+fallback = ""

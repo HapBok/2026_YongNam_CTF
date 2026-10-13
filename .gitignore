@@ -1,0 +1,21 @@
+.local/
+.runtime/
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
+config/contest.toml
+config/scope.toml
+# Reports may contain model responses, local paths, sessions and run metadata.
+# Keep all generated reports local; publish only separately reviewed summaries.
+reports/
+# Challenge exports can contain unpublished contest material or solved flags.
+challenges/*
+!challenges/README.md
+# Local credentials and private key material must never enter a backup.
+.env
+.env.*
+!.env.example
+auth.json
+*.pem
+*.key

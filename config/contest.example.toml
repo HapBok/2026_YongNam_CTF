@@ -1,0 +1,7 @@
+name = "2026 yeongnam CTF"
+personal_target = 13
+expected_challenges = 25
+workers = 8
+manual_submission = true
+discord = false
+

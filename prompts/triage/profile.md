@@ -1,0 +1,1 @@
+Choose the highest-value concrete next experiment. Rank up to 3 hypotheses; record rejected ones and expected evidence. Route web/pwn/malware to security-daybreak, other categories to general-sol. Use rescue-astra only when conflicting evidence prevents a clear next step. Do not invent vulnerabilities or run unapproved remote actions.

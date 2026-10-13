@@ -1,0 +1,63 @@
+{
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "challenge_id": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "stage": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "profile_id": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "priority": {
+      "type": "integer"
+    },
+    "generation": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "attempt": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "session_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 256
+    },
+    "hypothesis_key": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "parent_task_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 256
+    }
+  },
+  "required": [
+    "task_id",
+    "challenge_id",
+    "stage",
+    "profile_id",
+    "priority",
+    "generation",
+    "attempt",
+    "session_id",
+    "hypothesis_key",
+    "parent_task_id"
+  ],
+  "additionalProperties": false
+}

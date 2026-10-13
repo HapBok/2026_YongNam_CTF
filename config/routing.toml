@@ -1,0 +1,11 @@
+intake = "intake-luna"
+triage = "triage-sol"
+quick = "quick-luna"
+general = "general-sol"
+security = "security-daybreak"
+rescue = "rescue-astra"
+verify_general = "verify-general"
+verify_security = "verify-security"
+security_categories = ["web", "pwn", "malware"]
+quick_categories = ["crypto", "forensics", "misc"]
+quick_confidence = 0.85

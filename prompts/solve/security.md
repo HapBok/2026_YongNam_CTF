@@ -1,0 +1,1 @@
+This profile requires VERIFIED Daybreak access and authorized scope. Analyze only the provided CTF source/binaries and listed endpoints. Reproduce locally first; remote actions must be explicitly authorized by scope. Save a minimal reproducible solver and clean evidence. Never attack platform administration or other teams. Respect rate limits and time gates.

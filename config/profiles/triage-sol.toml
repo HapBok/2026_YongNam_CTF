@@ -1,0 +1,9 @@
+id = "triage-sol"
+stage = "triage"
+model = "gpt-6.1-sol"
+effort = "medium"
+timeout = 480
+prompt = "prompts/triage/profile.md"
+daybreak = false
+resumable = false
+fallback = "triage-fallback"

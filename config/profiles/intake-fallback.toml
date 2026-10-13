@@ -1,0 +1,9 @@
+id = "intake-fallback"
+stage = "intake"
+model = "gpt-6.1-sol"
+effort = "medium"
+timeout = 300
+prompt = "prompts/intake/profile.md"
+daybreak = false
+resumable = false
+fallback = ""

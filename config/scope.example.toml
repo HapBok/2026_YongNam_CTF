@@ -1,0 +1,16 @@
+# Copy to scope.toml; offline scope is sufficient for local work.
+version = 1
+rules_reference = "FILL: official rules or organizer authorization"
+authorized = false
+starts_at = "2026-10-14T01:00:00+00:00" # Verify official date/time before use (10:00 KST).
+ends_at = "2026-10-14T08:00:00+00:00"
+challenge_ids = []
+allowed_endpoints = []
+allow_remote = false
+allow_remote_shell = false
+allow_remote_write = false
+allow_callback = false
+rate_per_second = 1
+credentials = []
+# Manifest is a policy contract; engine does not claim OS-level egress filtering.
+

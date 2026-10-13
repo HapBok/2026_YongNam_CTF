@@ -1,0 +1,9 @@
+id = "intake-luna"
+stage = "intake"
+model = "gpt-6-luna"
+effort = "medium"
+timeout = 300
+prompt = "prompts/intake/profile.md"
+daybreak = false
+resumable = false
+fallback = "intake-fallback"

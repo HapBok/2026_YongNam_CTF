@@ -1,0 +1,9 @@
+id = "security-daybreak"
+stage = "solve-security"
+model = "gpt-6-sol"
+effort = "high"
+timeout = 1500
+prompt = "prompts/solve/security.md"
+daybreak = true
+resumable = true
+fallback = ""

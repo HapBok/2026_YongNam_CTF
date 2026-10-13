@@ -1,0 +1,9 @@
+id = "general-fallback"
+stage = "solve-general"
+model = "gpt-6-sol"
+effort = "high"
+timeout = 1500
+prompt = "prompts/solve/general.md"
+daybreak = false
+resumable = true
+fallback = ""

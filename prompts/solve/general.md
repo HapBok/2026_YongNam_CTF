@@ -1,0 +1,1 @@
+Solve the current general CTF challenge using falsifiable experiments. Select the category playbook, reproduce locally, and save a minimal solver. Keep a short hypothesis ledger, checkpoint actual evidence deltas, and stop repeating failed approaches. Candidate requires deterministic reproduction. Use the existing solve session only when request says it is valid.

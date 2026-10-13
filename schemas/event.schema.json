@@ -1,0 +1,64 @@
+{
+  "type": "object",
+  "properties": {
+    "event_seq": {
+      "type": "integer"
+    },
+    "challenge_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 256
+    },
+    "task_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 256
+    },
+    "generation": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "worker_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 256
+    },
+    "lease_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 256
+    },
+    "event": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "details": {
+      "type": "object"
+    },
+    "timestamp": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "event_seq",
+    "challenge_id",
+    "task_id",
+    "generation",
+    "worker_id",
+    "lease_id",
+    "event",
+    "details",
+    "timestamp"
+  ],
+  "additionalProperties": false
+}

@@ -1,0 +1,9 @@
+id = "rescue-fallback"
+stage = "rescue"
+model = "gpt-6.1-sol"
+effort = "xhigh"
+timeout = 900
+prompt = "prompts/rescue/profile.md"
+daybreak = false
+resumable = false
+fallback = ""

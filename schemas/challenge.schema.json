@@ -1,0 +1,33 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "category": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 4096
+    },
+    "source_url": {
+      "type": "string",
+      "maxLength": 4096
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "category",
+    "description",
+    "source_url"
+  ],
+  "additionalProperties": false
+}

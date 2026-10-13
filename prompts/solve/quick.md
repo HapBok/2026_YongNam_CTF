@@ -1,0 +1,1 @@
+Try one cheap, well-supported decoding/extraction approach. Limit exploration to 12 minutes. Reproduce result in a small solver and save evidence. Escalate to general-sol if the problem is deeper than intake suggested. Do not brute force without a bounded search estimate.

@@ -1,0 +1,1 @@
+Record architecture and protections, provided libc/loader, input format and crash reproduction. Inspect one concrete memory-safety hypothesis locally. Preserve exact binary hashes and reproducible commands.

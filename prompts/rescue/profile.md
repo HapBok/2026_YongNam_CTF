@@ -1,0 +1,1 @@
+Review only compact evidence and rejected hypotheses in a fresh context. Diagnose the missing assumption, choose a genuinely distinct hypothesis, and return one targeted next experiment. Do not restart broad enumeration. Limit to 15 minutes.
