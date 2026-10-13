@@ -1,5 +1,7 @@
 # 돌아와서 실행할 순서
 
+처음 CLI를 사용하는 경우 [CLI 시작과 운영 매뉴얼](cli-manual-ko.md)을 먼저 읽으세요. PowerShell과 Ubuntu 명령 구분, 별도 모의 환경, 보이는 탭 8개와 실제 모델 실행을 순서대로 안내합니다.
+
 ## 현재 준비된 것
 
 프로젝트 전용 Linux Codex 0.162.1, 기존 계정 로그인 연결, 모델별 Profile, 8 Worker, 취소/교체/복구, 파일 검증과 운영 문서가 준비되어 있습니다. 전역 Windows Codex 0.144.1은 유지했습니다. NTFS의 Flag 파일은 현재 사용자·SYSTEM·관리자 ACL로 보호합니다.
@@ -13,6 +15,7 @@ WSL Ubuntu에서:
 ```bash
 cd '/mnt/c/Users/happy/Ready_Google/CTF/2026_영남권 CTF/Agent Engineering'
 python3 ctfctl.py init-run
+python3 scripts/acceptance.py --repeat 3
 python3 ctfctl.py doctor --live
 python3 ctfctl.py import '/문제/파일/경로' --id c001 --title '문제명' --description '문제 설명'
 ```

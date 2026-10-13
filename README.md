@@ -4,6 +4,8 @@
 
 ## 시작
 
+처음 실행하는 운영자는 [한국어 CLI 시작과 운영 매뉴얼](docs/cli-manual-ko.md)의 모의 시험부터 진행하세요. 현재 Windows 실행기는 한 창에 Worker 탭 8개를 엽니다.
+
 실행 환경은 WSL Ubuntu / Python 3.11 이상입니다. Windows Python 3.10은 지원하지 않습니다.
 
 ```bash
