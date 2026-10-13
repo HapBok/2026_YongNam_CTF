@@ -57,7 +57,7 @@ def run(root,live=False):
     state=State(root)
     report["db_integrity"]=state.one("PRAGMA integrity_check")["integrity_check"]
     helptext=report["checks"]["exec_help"].get("stdout","")
-    report["features"]={flag:flag in helptext for flag in ["--output-schema","--cyber-access-program","--ignore-user-config","--json"]}
+    report["features"]={flag:flag in helptext for flag in ["--output-schema","--cyber-access-program","--ignore-user-config","--json","--image"]}
     report["canaries"]=[]
     if live and report["linux"] and report["checks"]["login"]["ok"] and all(report["features"].values()):
         async def all_canaries():

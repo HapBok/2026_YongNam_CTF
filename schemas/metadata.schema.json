@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "title": {"type": "string", "maxLength": 512},
+    "category": {"type": "string", "enum": ["unknown", "web", "pwn", "rev", "crypto", "forensics", "mobile", "ai", "misc"]},
+    "description": {"type": "string", "maxLength": 18000},
+    "connections": {"type": "array", "description": "Complete exact connection expressions only, e.g. nc host 12345 or https://host:443/path. Never split a host and port into separate entries or omit a visible nc prefix.", "items": {"type": "string", "maxLength": 1024}, "maxItems": 16},
+    "source_url": {"type": "string", "maxLength": 2048},
+    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+    "needs_review": {"type": "boolean"},
+    "warnings": {"type": "array", "items": {"type": "string", "maxLength": 512}, "maxItems": 16}
+  },
+  "required": ["title", "category", "description", "connections", "source_url", "confidence", "needs_review", "warnings"],
+  "additionalProperties": false
+}

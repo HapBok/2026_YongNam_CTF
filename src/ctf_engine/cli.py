@@ -25,7 +25,9 @@ def parser():
     d=sub.add_parser("doctor"); d.add_argument("--live",action="store_true")
     r=sub.add_parser("init-run"); r.add_argument("--mock",action="store_true")
     i=sub.add_parser("import"); i.add_argument("path",type=Path); i.add_argument("--id",required=True); i.add_argument("--title",required=True); i.add_argument("--category",default="unknown"); i.add_argument("--description",default="")
-    b=sub.add_parser("import-batch"); b.add_argument("directory",type=Path)
+    b=sub.add_parser("import-batch"); b.add_argument("directory",type=Path); b.add_argument("--skip-existing",action="store_true")
+    m=sub.add_parser("make-toml",help="Generate challenge.toml from statement screenshots; never edits scope.toml")
+    m.add_argument("directory",type=Path); m.add_argument("--batch",action="store_true"); m.add_argument("--id")
     s=sub.add_parser("start"); s.add_argument("--workers",type=int,default=8); s.add_argument("--mock",action="store_true"); s.add_argument("--external-workers",action="store_true"); s.add_argument("--until-idle",action="store_true")
     w=sub.add_parser("worker"); w.add_argument("--id",required=True,choices=[f"w{i:02d}" for i in range(1,9)]); w.add_argument("--mock",action="store_true"); w.add_argument("--once",action="store_true")
     st=sub.add_parser("status"); st.add_argument("--watch",action="store_true"); st.add_argument("--json",action="store_true")
@@ -43,13 +45,19 @@ def parser():
 
 
 def status(state):
-    return {"mode":state.meta("mode","breadth"),"peak_active":state.meta("peak_active",0),"supervisor_live":now()-state.meta("supervisor_heartbeat",0)<15,"dispatch_blocked":state.meta("dispatch_blocked"),"quota_remaining":state.meta("quota_remaining"),"usage_by_profile":state.meta("usage_by_profile",{}),"challenges":state.rows("SELECT id,title,category,state,generation,last_error,solve_seconds FROM challenges ORDER BY id"),"active":state.rows("SELECT worker_id,challenge_id,stage,profile_id,status,lease_until FROM tasks WHERE status IN ('LEASED','STARTING','RUNNING','CANCELLING','COMMITTING') ORDER BY worker_id")}
+    metadata=state.meta('metadata_slot')
+    return {"mode":state.meta("mode","breadth"),"peak_active":state.meta("peak_active",0),"supervisor_live":now()-state.meta("supervisor_heartbeat",0)<15,"dispatch_blocked":state.meta("dispatch_blocked"),"quota_remaining":state.meta("quota_remaining"),"usage_by_profile":state.meta("usage_by_profile",{}),"metadata":{k:metadata.get(k) for k in ('phase','profile','heartbeat')} if metadata else None,"challenges":state.rows("SELECT id,title,category,state,generation,last_error,solve_seconds FROM challenges ORDER BY id"),"active":state.rows("SELECT worker_id,challenge_id,stage,profile_id,status,lease_until FROM tasks WHERE status IN ('LEASED','STARTING','RUNNING','CANCELLING','COMMITTING') ORDER BY worker_id")}
 
 
 def main(argv=None):
     args=parser().parse_args(argv); root=args.root.resolve()
     try:
         state=State(root); profiles=load(root)
+        if args.command=="make-toml":
+            from .metadata import generate
+            report=asyncio.run(generate(root,state,args.directory,args.batch,args.id))
+            print(json.dumps({"passed":report["passed"],"scope_modified":False},ensure_ascii=False))
+            return 0 if report["passed"] else 2
         if args.command=="doctor":
             report=doctor.run(root,args.live)
             print(json.dumps({"models_ready":report["models_ready"],"ready":report["ready"],"scope_error":report.get("scope_error"),"linux":report["linux"],"login":report["checks"]["login"],"canaries":report["canaries"],"report":str(root/"reports/preflight.json")},ensure_ascii=False,indent=2))
@@ -76,6 +84,8 @@ def main(argv=None):
                 if not meta.exists():raise ValueError("Each batch folder needs challenge.toml")
                 info=tomllib.loads(meta.read_text(encoding="utf-8"))
                 scope.validate(s,info["id"])
+                if args.skip_existing and state.one("SELECT id FROM challenges WHERE id=?",(info["id"],)):
+                    print(json.dumps({"id":info["id"],"status":"ALREADY_IMPORTED"},ensure_ascii=False));continue
                 import_problem(root,state,directory/"files",info["id"],info["title"],info.get("category","unknown"),info.get("description",""),h)
             return 0
         if args.command=="start":
@@ -91,7 +101,9 @@ def main(argv=None):
                 data=status(state)
                 if args.json:print(json.dumps(data,ensure_ascii=False))
                 else:
-                    print(f"mode={data['mode']} active={len(data['active'])}/8 peak={data['peak_active']} supervisor={data['supervisor_live']}")
+                    metadata_active=int(bool(data['metadata'] and data['metadata']['phase']=='running'))
+                    print(f"mode={data['mode']} active={len(data['active'])+metadata_active}/8 peak={data['peak_active']} supervisor={data['supervisor_live']}")
+                    if data['metadata']:print(f"  metadata {data['metadata']['phase']} {data['metadata']['profile']}")
                     for row in data["challenges"]:print(f"{row['id']:<12} {row['category']:<10} {row['state']:<26} {row['last_error']}")
                     for row in data["active"]:print(f"  {row['worker_id']} {row['challenge_id']} {row['stage']} {row['profile_id']}")
                 if not args.watch:return 0
@@ -103,13 +115,14 @@ def main(argv=None):
         if args.command=="snapshot":
             dest=root/"reports/run-snapshots"/(uid("snapshot")+".db");state.backup(dest);print(dest);return 0
         if args.command=="recover":
-            from .process_control import group_alive
+            from .process_control import group_alive,recover_metadata
             from .supervisor import Supervisor
             Supervisor(root,state.meta("mock",False)).cancel_and_recover()
             for task in state.rows("SELECT pid FROM tasks WHERE status IN ('LEASED','STARTING','RUNNING','CANCELLING','COMMITTING')"):
                 if task["pid"] and group_alive(task["pid"]):raise ValueError("Live process group still exists; recovery not confirmed")
             if state.one("SELECT task_id FROM tasks WHERE status IN ('LEASED','STARTING','RUNNING','CANCELLING','COMMITTING')"):
                 raise ValueError("Active lease remains; wait for it to expire or cancel it")
+            recover_metadata(state)
             state.setmeta("dispatch_blocked",None);print("RECOVERY_CONFIRMED");return 0
         ch=state.one("SELECT * FROM challenges WHERE id=?",(safe_id(args.challenge_id),))
         if not ch:raise ValueError("Unknown challenge")

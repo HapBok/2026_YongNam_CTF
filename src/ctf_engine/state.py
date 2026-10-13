@@ -129,6 +129,39 @@ class State:
                 raise ValueError("Worker ID already live")
             c.execute("INSERT INTO workers VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET token=excluded.token, heartbeat=excluded.heartbeat,pid=excluded.pid",(worker,token,now(),pid))
 
+    def metadata_slot(self, token, pid, process_identity, profile):
+        """Reserve one of the same eight slots, including while waiting for capacity.
+
+        A crashed helper's reservation never expires open: recover must confirm its
+        process group is gone before clearing it. This prevents a ninth Agent Run.
+        """
+        with self.tx() as c:
+            row=c.execute("SELECT value FROM meta WHERE key='metadata_slot'").fetchone()
+            old=json.loads(row[0]) if row else None
+            if old and old['token']!=token:
+                raise ValueError('METADATA_RECOVERY_REQUIRED: previous metadata slot is still reserved')
+            running=c.execute("SELECT COUNT(*) FROM tasks WHERE status IN ('LEASED','STARTING','RUNNING','CANCELLING','COMMITTING')").fetchone()[0]
+            ready=running<min(8,self.meta('workers',8))
+            value=old or {'token':token,'owner_pid':pid,'owner_identity':process_identity,'child_pid':None,'child_identity':None}
+            value.update(profile=profile,phase='running' if ready else 'waiting',heartbeat=now())
+            self.setmeta('metadata_slot',value,c)
+            if ready:self.setmeta('peak_active',max(self.meta('peak_active',0),running+1),c)
+            return ready
+
+    def metadata_child(self, token, pid, identity):
+        with self.tx() as c:
+            row=c.execute("SELECT value FROM meta WHERE key='metadata_slot'").fetchone()
+            value=json.loads(row[0]) if row else None
+            if not value or value['token']!=token:raise ValueError('METADATA_SLOT_LOST')
+            value.update(child_pid=pid,child_identity=identity,heartbeat=now())
+            self.setmeta('metadata_slot',value,c)
+
+    def metadata_release(self, token):
+        with self.tx() as c:
+            row=c.execute("SELECT value FROM meta WHERE key='metadata_slot'").fetchone()
+            value=json.loads(row[0]) if row else None
+            if value and value['token']==token:self.setmeta('metadata_slot',None,c)
+
     def claim(self, worker, token, ttl, cap=8, depth=False):
         with self.tx() as c:
             live = c.execute("SELECT token FROM workers WHERE id=?",(worker,)).fetchone()
@@ -136,7 +169,9 @@ class State:
                 return None
             self.setmeta("peak_active", max(self.meta("peak_active",0),0),c)
             running = c.execute("SELECT * FROM tasks WHERE status IN ('LEASED','STARTING','RUNNING','CANCELLING','COMMITTING')").fetchall()
-            if len(running) >= min(cap,8) or any(r["worker_id"] == worker for r in running):
+            metadata_row=c.execute("SELECT value FROM meta WHERE key='metadata_slot'").fetchone()
+            metadata=json.loads(metadata_row[0]) if metadata_row else None
+            if len(running) >= min(cap,8)-int(bool(metadata)) or any(r["worker_id"] == worker for r in running):
                 return None
             if self.meta("shutdown",False) or self.meta("dispatch_blocked") or now()-self.meta("supervisor_heartbeat",0) > ttl:
                 return None
@@ -159,7 +194,7 @@ class State:
                 c.execute("UPDATE challenges SET started=COALESCE(started,?),evidence_at=COALESCE(evidence_at,?) WHERE id=?",(now(),now(),task["challenge_id"]))
                 task.update(status="LEASED",worker_id=worker,lease_id=lease,lease_until=now()+ttl,started=now())
                 self.event(c,"CLAIMED",task=task)
-                self.setmeta("peak_active",max(self.meta("peak_active",0),len(running)+1),c)
+                self.setmeta("peak_active",max(self.meta("peak_active",0),len(running)+1+int(bool(metadata and metadata.get('phase')=='running'))),c)
                 return task
             return None
 

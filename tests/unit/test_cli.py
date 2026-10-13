@@ -43,6 +43,7 @@ class CLITest(unittest.TestCase):
         (files/"payload.txt").write_bytes(base64.b64encode(b"TEST{batch}"))
         self.assertEqual(self.call("import-batch",str(folder.parent)),0)
         self.assertEqual(self.call("import-batch",str(folder.parent)),2)
+        self.assertEqual(self.call("import-batch",str(folder.parent),"--skip-existing"),0)
         self.assertEqual(self.call("extend","c004","--reason","no primitive"),2)
         with self.state.tx() as c:c.execute("UPDATE challenges SET primitive=1 WHERE id='c004'")
         self.assertEqual(self.call("extend","c004","--reason","concrete primitive"),0)

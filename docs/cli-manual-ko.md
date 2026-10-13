@@ -192,6 +192,8 @@ python3 ctfctl.py doctor --live
 
 ## 6 실제 문제 넣기
 
+캡처로 문제 정보를 채우려면 [문제 캡처로 TOML 자동 생성하기](screenshot-toml-ko.md)를 사용하세요. 각 문제 폴더의 `info/`에 캡처, `files/`에 첨부파일을 넣은 뒤 `make-toml <문제 폴더> --batch`로 `challenge.toml`을 생성할 수 있습니다. `scope.toml`은 변경하지 않습니다.
+
 문제별로 파일을 모은 폴더를 준비하고 Ubuntu 관리 터미널에서 등록합니다. 아래 경로·이름·설명은 실제 값으로 바꿉니다. `c001`은 허용 범위에 등록한 ID여야 합니다.
 
 ```bash
@@ -230,7 +232,7 @@ description = "공식 문제 설명"
 python3 ctfctl.py import-batch '/mnt/c/Users/happy/Downloads/incoming'
 ```
 
-Batch는 전체 묶음을 한 번에 되돌리는 방식이 아닙니다. 중간 실패 시 앞의 문제는 등록되어 있을 수 있으므로 상태를 확인하고 누락 문제만 개별 등록합니다.
+Batch는 전체 묶음을 한 번에 되돌리는 방식이 아닙니다. 중간 실패 시 앞의 문제는 등록되어 있을 수 있으므로 상태를 확인하고 누락 문제만 개별 등록합니다. 같은 상위 폴더에 새 문제를 계속 추가할 때는 `import-batch <경로> --skip-existing`으로 이미 등록된 ID를 건너뛸 수 있습니다. 기존 문제 내용을 갱신하는 기능은 아닙니다.
 
 ## 7 실제 Worker 탭 8개 시작
 

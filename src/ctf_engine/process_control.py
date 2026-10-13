@@ -2,6 +2,7 @@ import asyncio
 import os
 from pathlib import Path
 import signal
+import time
 
 
 def process_token(pid):
@@ -47,6 +48,23 @@ async def terminate(proc, grace=3):
         if proc.returncode is None:
             proc.kill()
         await proc.wait()
+
+
+def recover_metadata(state):
+    """Fail closed on a live owner or unidentifiable orphan process group."""
+    lease=state.meta('metadata_slot')
+    if not lease:return
+    if same_process(lease.get('owner_pid'),lease.get('owner_identity')):
+        raise ValueError('METADATA_GENERATOR_STILL_RUNNING: stop it before recover')
+    child=lease.get('child_pid')
+    if child and group_alive(child):
+        if not same_process(child,lease.get('child_identity')):
+            raise ValueError('METADATA_ORPHAN_REVIEW_REQUIRED: process identity cannot be confirmed')
+        os.killpg(child,signal.SIGKILL)
+        deadline=time.monotonic()+7
+        while group_alive(child) and time.monotonic()<deadline:time.sleep(.1)
+        if group_alive(child):raise ValueError('METADATA_PROCESS_GROUP_STILL_ALIVE')
+    state.metadata_release(lease['token'])
 
 
 class InstanceLock:

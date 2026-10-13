@@ -12,4 +12,5 @@
 10. Daybreak profiles explicitly request daybreak_blue and require a successful live preflight for the same scope/binary. Missing access becomes MANUAL_DAYBREAK_REQUIRED, never a silent general fallback.
 11. Side-effect uncertainty after crashes requires manual review. Frozen/dirty attempts are not silently retried. Credentials and flags stay local and outside Git; logs redact known flag/token patterns and omit model/tool text.
 12. Live readiness is distinct from implementation tests. Mock success never proves model availability, quota, Daybreak approval or real CTF success.
+13. Screenshot metadata is untrusted problem data. make-toml writes only the operator-selected problem TOML or review draft, never scope.toml. It shares one reserved slot with the eight-run ledger, preserves existing TOML, and never executes extracted instructions or connections. Stale metadata reservations require confirmed process recovery before release.
 

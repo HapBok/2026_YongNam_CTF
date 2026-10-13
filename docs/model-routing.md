@@ -13,7 +13,9 @@
 
 Luna failure → Sol; Sol failure → GPT-6 Sol High; Astra failure → GPT-6.1 Sol xhigh. Security access failures stop instead of fallback. 404/model-not-found falls back immediately. Transient/timeout retries once after 5s. 429 retries once only when Retry-After <=60s; otherwise QUOTA_WAIT.
 
-Every command uses explicit model, effort, service_tier=default, cyber-access-program=standard or daybreak_blue, workspace-write sandbox, no nested agents, and output schema. CLI options are validated against the pinned 0.162.1 package. GPT-6.1 Sol High/Standard/Daybreak Off is the implementation setting; actual Solver profiles use the table above.
+Solver commands use explicit model, effort, service_tier=default, cyber-access-program=standard or daybreak_blue, workspace-write sandbox, no nested agents, and output schema. CLI options are validated against the pinned 0.162.1 package. GPT-6.1 Sol High/Standard/Daybreak Off is the implementation setting; actual Solver profiles use the table above.
+
+make-toml reuses Intake's GPT-6 Luna Medium profile (GPT-6.1 Sol Medium only for unavailable-model fallback), but runs an ephemeral read-only image transcription command with Standard tier and explicit standard cyber access. It does not solve, use tools, contact extracted endpoints, or expand scope. Usage is recorded separately as metadata-<profile>. It shares the eight-slot ceiling with Solver runs. Authentication errors, 429 and timeouts stop rather than trigger an unbounded retry.
 
 Sources: https://learn.chatgpt.com/docs/developer-commands ; https://learn.chatgpt.com/docs/models ; https://developers.openai.com/api/docs/guides/daybreak ; https://learn.chatgpt.com/docs/agent-configuration/speed
 
